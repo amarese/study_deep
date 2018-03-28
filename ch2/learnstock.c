@@ -1,66 +1,66 @@
 /********************************************/
 /*         learnstock.c                     */
-/*  ´Ü¼øÇÑ ±Í³³ÇĞ½À ¿¹Á¦ ÇÁ·Î±×·¥        */
-/*            ÆĞÅÏ ÇĞ½À±â                */
-/* 100°³ÀÇ ÇĞ½À µ¥ÀÌÅÍ¸¦ ÀĞ¾îµé¿©            */
-/* ÀûÇÕÇÑ 10ÀÚ¸®ÀÇ 2Áø¼ö ÆĞÅÏÀ» ´äÇÔ  */
-/* »ç¿ë ¹æ¹ı                                    */
+/*  ë‹¨ìˆœí•œ ê·€ë‚©í•™ìŠµ ì˜ˆì œ í”„ë¡œê·¸ë¨        */
+/*            íŒ¨í„´ í•™ìŠµê¸°                */
+/* 100ê°œì˜ í•™ìŠµ ë°ì´í„°ë¥¼ ì½ì–´ë“¤ì—¬            */
+/* ì í•©í•œ 10ìë¦¬ì˜ 2ì§„ìˆ˜ íŒ¨í„´ì„ ë‹µí•¨  */
+/* ì‚¬ìš© ë°©ë²•                                    */
 /*:\Users\deeplearning\ch2>learnstock < ldata.txt */
 /********************************************/
 
-/*Visual Studio¿ÍÀÇ È£È¯¼º È®º¸ */
+/*Visual Studioì™€ì˜ í˜¸í™˜ì„± í™•ë³´ */
 #define _CRT_SECURE_NO_WARNINGS
 
-/* Çì´õ ÆÄÀÏ Æ÷ÇÔ */
+/* í—¤ë” íŒŒì¼ í¬í•¨ */
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ±âÈ£ »ó¼ö Á¤ÀÇ             */
+/* ê¸°í˜¸ ìƒìˆ˜ ì •ì˜             */
 #define OK 1 
 #define NG 0
-#define SETSIZE 100 /* ÇĞ½À µ¥ÀÌÅÍ ¼¼Æ®ÀÇ Å©±â */
-#define CNO 10 /* ÇĞ½À µ¥ÀÌÅÍÀÇ ÀÚ¸´¼ö(10È¸»ç ºĞ) */
-#define GENMAX  10000 /* ÇØ´ä ÈÄº¸ »ı¼º È½¼ö */
-#define SEED 32767 /* ³­¼ö ½Ãµå */
+#define SETSIZE 100 /* í•™ìŠµ ë°ì´í„° ì„¸íŠ¸ì˜ í¬ê¸° */
+#define CNO 10 /* í•™ìŠµ ë°ì´í„°ì˜ ìë¦¿ìˆ˜(10íšŒì‚¬ ë¶„) */
+#define GENMAX  10000 /* í•´ë‹µ í›„ë³´ ìƒì„± íšŸìˆ˜ */
+#define SEED 32767 /* ë‚œìˆ˜ ì‹œë“œ */
 
-/* ÇÔ¼ö ÇÁ·ÎÅäÅ¸ÀÔ ¼±¾ğ  */
+/* í•¨ìˆ˜ í”„ë¡œí† íƒ€ì… ì„ ì–¸  */
 void readdata(int data[SETSIZE][CNO],int teacher[SETSIZE]) ;
-           /* ÇĞ½À µ¥ÀÌÅÍ ¼¼Æ®¸¦ ÀĞ¾îµéÀÓ */
-int rand012() ;/*0, 1 ¶Ç´Â 2¸¦ ¹İÈ¯ÇÏ´Â ³­¼ö ÇÔ¼ö */
+           /* í•™ìŠµ ë°ì´í„° ì„¸íŠ¸ë¥¼ ì½ì–´ë“¤ì„ */
+int rand012() ;/*0, 1 ë˜ëŠ” 2ë¥¼ ë°˜í™˜í•˜ëŠ” ë‚œìˆ˜ í•¨ìˆ˜ */
 int calcscore(int data[SETSIZE][CNO],int teacher[SETSIZE],
               int answer[CNO]) ;
-           /* ÇØ´ä ÈÄº¸ ÆĞÅÏÀÇ Á¡¼ö(0~SETSIZEÁ¡)ÀÇ °è»ê */
+           /* í•´ë‹µ í›„ë³´ íŒ¨í„´ì˜ ì ìˆ˜(0~SETSIZEì )ì˜ ê³„ì‚° */
 
 /****************/
-/*  main() ÇÔ¼ö  */
+/*  main() í•¨ìˆ˜  */
 /****************/
 int main()
 {
  int i, j;
- int score = 0;/* Á¡¼ö(0¢¦SETSIZEÁ¡)*/
- int answer[CNO];/* ÇØ´ä ÈÄº¸ */
- int data[SETSIZE][CNO];/* ÇĞ½À µ¥ÀÌÅÍ ¼¼Æ® */
- int teacher[SETSIZE];/* ±³»ç µ¥ÀÌÅÍ */
- int bestscore = 0;/* °¡Àå ÁÁÀº Á¡¼ö */
- int bestanswer[CNO];/* Å½»ö Áß Ã£Àº °¡Àå ÁÁÀº Á¡¼ö */
+ int score = 0;/* ì ìˆ˜(0ï½SETSIZEì )*/
+ int answer[CNO];/* í•´ë‹µ í›„ë³´ */
+ int data[SETSIZE][CNO];/* í•™ìŠµ ë°ì´í„° ì„¸íŠ¸ */
+ int teacher[SETSIZE];/* êµì‚¬ ë°ì´í„° */
+ int bestscore = 0;/* ê°€ì¥ ì¢‹ì€ ì ìˆ˜ */
+ int bestanswer[CNO];/* íƒìƒ‰ ì¤‘ ì°¾ì€ ê°€ì¥ ì¢‹ì€ ì ìˆ˜ */
 
- srand(SEED);/* ³­¼ö ÃÊ±âÈ­ */
+ srand(SEED);/* ë‚œìˆ˜ ì´ˆê¸°í™” */
 
- /*ÇĞ½À µ¥ÀÌÅÍ ¼¼Æ®¸¦ ÀĞ¾îµéÀÓ */
+ /*í•™ìŠµ ë°ì´í„° ì„¸íŠ¸ë¥¼ ì½ì–´ë“¤ì„ */
  readdata(data,teacher) ;
 
- /* ÇØ´ä ÈÄº¸ »ı¼º°ú °Ë»ç */
+ /* í•´ë‹µ í›„ë³´ ìƒì„±ê³¼ ê²€ì‚¬ */
  for (i = 0; i<GENMAX; ++i) {
-  /* ÇØ´ä ÈÄº¸ »ı¼º */
+  /* í•´ë‹µ í›„ë³´ ìƒì„± */
   for (j = 0; j<CNO; ++j) {
    answer[j] = rand012();
   }
 
-  /* °Ë»ç */
+  /* ê²€ì‚¬ */
   score=calcscore(data,teacher,answer) ;
 
-  /* °¡Àå ÁÁÀº Á¡¼ö·Î °»½Å */
-  if (score>bestscore) {/* Áö±İ±îÁö °¡Àå ÁÁÀº Á¡¼ö¶ó¸é °»½Å */
+  /* ê°€ì¥ ì¢‹ì€ ì ìˆ˜ë¡œ ê°±ì‹  */
+  if (score>bestscore) {/* ì§€ê¸ˆê¹Œì§€ ê°€ì¥ ì¢‹ì€ ì ìˆ˜ë¼ë©´ ê°±ì‹  */
    for (j = 0; j<CNO; ++j)
     bestanswer[j] = answer[j];
    bestscore = score;
@@ -69,8 +69,8 @@ int main()
    printf(":score=%d\n", bestscore);
   }
  }
- /* °¡Àå ÁÁÀº ÇØ´ä Ãâ·Â */
- printf("\n°¡Àå ÁÁÀº ÇØ´ä\n");
+ /* ê°€ì¥ ì¢‹ì€ í•´ë‹µ ì¶œë ¥ */
+ printf("\nê°€ì¥ ì¢‹ì€ í•´ë‹µ\n");
  for (j = 0; j<CNO; ++j)
   printf("%1d ", bestanswer[j]);
  printf(":score=%d\n", bestscore);
@@ -79,22 +79,22 @@ int main()
 }
 
 /**********************************************/
-/*            calcscore() ÇÔ¼ö                 */
-/* ÇØ´ä ÈÄº¸ ÆĞÅÏÀÇ Á¡¼ö(0¢¦SETSIZEÁ¡) °è»ê*/
+/*            calcscore() í•¨ìˆ˜                 */
+/* í•´ë‹µ í›„ë³´ íŒ¨í„´ì˜ ì ìˆ˜(0ï½SETSIZEì ) ê³„ì‚°*/
 /**********************************************/
 int calcscore(int data[SETSIZE][CNO],int teacher[SETSIZE],
               int answer[CNO])
 {
- int score = 0;/* Á¡¼ö(0¢¦SETSIZEÁ¡)*/
- int point  ;/* ÀÏÄ¡ÇÑ ÀÚ¸´¼ö(0¢¦CNO)  */
+ int score = 0;/* ì ìˆ˜(0ï½SETSIZEì )*/
+ int point  ;/* ì¼ì¹˜í•œ ìë¦¿ìˆ˜(0ï½CNO)  */
  int i,j ;
  
 for (i = 0; i<SETSIZE; ++i) {
-  /* ÀÏÄ¡µµ °è»ê */
+  /* ì¼ì¹˜ë„ ê³„ì‚° */
   point = 0;
   for (j = 0; j<CNO; ++j) {
-   if (answer[j] == 2) ++point;/* ¿ÍÀÏµåÄ«µå */
-   else if (answer[j] == data[i][j]) ++point;/* ÀÏÄ¡ */
+   if (answer[j] == 2) ++point;/* ì™€ì¼ë“œì¹´ë“œ */
+   else if (answer[j] == data[i][j]) ++point;/* ì¼ì¹˜ */
   }
 
   if ((point == CNO) && (teacher[i] == 1)) {
@@ -108,8 +108,8 @@ for (i = 0; i<SETSIZE; ++i) {
 }
 
 /****************************/
-/*     readdata() ÇÔ¼ö        */
-/*ÇĞ½À µ¥ÀÌÅÍ ¼¼Æ®¸¦ ÀĞ¾îµéÀÓ */
+/*     readdata() í•¨ìˆ˜        */
+/*í•™ìŠµ ë°ì´í„° ì„¸íŠ¸ë¥¼ ì½ì–´ë“¤ì„ */
 /****************************/
 void readdata(int data[SETSIZE][CNO],int teacher[SETSIZE])
 {
@@ -124,16 +124,16 @@ void readdata(int data[SETSIZE][CNO],int teacher[SETSIZE])
 }
 
 /****************************/
-/*     rand012() ÇÔ¼ö        */
-/*¡¡0, 1 ¶Ç´Â 2¸¦ ¹İÈ¯ÇÏ´Â ³­¼ö ÇÔ¼ö */
+/*     rand012() í•¨ìˆ˜        */
+/*ã€€0, 1 ë˜ëŠ” 2ë¥¼ ë°˜í™˜í•˜ëŠ” ë‚œìˆ˜ í•¨ìˆ˜ */
 /****************************/
 int rand012()
 {
  int rnd ;
  
- /* ³­¼öÀÇ ÃÖ´ñ°ªÀ» Á¦¿Ü */
+ /* ë‚œìˆ˜ì˜ ìµœëŒ“ê°’ì„ ì œì™¸ */
  while((rnd=rand())==RAND_MAX) ;
- /* ³­¼ö °è»ê */ 
+ /* ë‚œìˆ˜ ê³„ì‚° */ 
  return (double)rnd/RAND_MAX*3 ;
 }
 
